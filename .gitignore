@@ -1,0 +1,8 @@
+# Ignorar carpeta para la base de datos
+data/postgres
+
+# ignorar el archivo .env
+.env
+
+#ignorar carpeta backend/composer
+backend/composer

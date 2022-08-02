@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+    frontend:
+      build:
+        context: .
+        target: develop-stage
+      volumes:
+        - './frontend:/app'
+      ports:
+        - 8080:8080
+      command: /bin/sh -c "npm run serve"
+      networks:
+        - aulas
+
+    backend:
+      image: yiisoftware/yii2-php:7.1-apache
+      volumes:
+        - ./backend/composer/cache:/root/.composer/cache:delegated
+        - ./backend/basic:/app:delegated
+      environment:
+        DATABASE_NAME: ${DATABASE_NAME}
+        DATABASE_USER: ${DATABASE_USER}
+        DATABASE_PASS: ${DATABASE_PASS}
+        DATABASE_HOST: db
+        PRODUCTION: ${AMBIENTE_DESARROLLO}
+        PHP_USER_ID: ${USER_UID}
+      ports:  
+        - 8000:80
+      networks:
+        - aulas
+
+    db:
+      image: postgres:14-alpine
+      environment:
+        POSTGRES_USER: ${DATABASE_USER}
+        POSTGRES_PASSWORD: ${DATABASE_PASS}
+        POSTGRES_DB: ${DATABASE_NAME}
+      volumes:
+        - './data/postgres:/var/lib/postgresql/data:delegated'
+      ports:
+        - 5432:5432
+      networks:
+        - aulas
+
+networks:
+  aulas:
+    driver: bridge
